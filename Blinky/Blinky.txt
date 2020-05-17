@@ -1,0 +1,110 @@
+Configuration	Blinky
+STM32CubeMX 	5.6.0
+Date	05/16/2020
+MCU	STM32G431KBTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC2	IN17 Single-ended	ADC2_IN17	PA4
+SPI1	Full-Duplex Master	SPI1_MISO	PB4
+SPI1	Full-Duplex Master	SPI1_MOSI	PB5
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	Serial Wire	SYS_JTCK-SWCLK	PA14
+SYS	Serial Wire	SYS_JTMS-SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+SYS	Dead Battery Signals disabled	SYS_VS_DBSignals	VP_SYS_VS_DBSignals
+TIM15	Internal Clock	TIM15_VS_ClockSourceINT	VP_TIM15_VS_ClockSourceINT
+TIM16	Enable_Timer	TIM16_VS_ClockSourceINT	VP_TIM16_VS_ClockSourceINT
+TIM17	Enable_Timer	TIM17_VS_ClockSourceINT	VP_TIM17_VS_ClockSourceINT
+USART1	Asynchronous	USART1_RX	PA10
+USART1	Asynchronous	USART1_TX	PA9
+USART2	Asynchronous	USART2_RX	PA3
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+5	PA0	GPIO_Output	OLED_DC
+6	PA1	GPIO_Output	OLED_RST
+7	PA2	USART2_TX	USART2_TX [ST-LINKV3E_VCP_RX]
+8	PA3	USART2_RX	USART2_RX [ST-LINKV3E_VCP_TX]
+9	PA4	ADC2_IN17	BAT_DIV
+10	PA5	SPI1_SCK	UI_SCK
+12	PA7	GPIO_Input	VSRC
+18	PA8	GPIO_Output	BRK_CTRL
+19	PA9	USART1_TX	
+20	PA10	USART1_RX	
+21	PA11	GPIO_Output	KEYPAD_PL
+22	PA12	GPIO_Output	OLED_CS
+23	PA13	SYS_JTMS-SWDIO	T_SWDIO
+24	PA14	SYS_JTCK-SWCLK	T_SWCLK
+26	PB3*	SYS_JTDO-SWO	T_SWO
+27	PB4	SPI1_MISO	UI_MISO
+28	PB5	SPI1_MOSI	UI_MOSI
+31	PB8-BOOT0	GPIO_Output	LD2 [green]
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC2	IN17 Single-ended	ADC2_IN17	PA4
+SPI1	Full-Duplex Master	SPI1_MISO	PB4
+SPI1	Full-Duplex Master	SPI1_MOSI	PB5
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SYS	Serial Wire	SYS_JTCK-SWCLK	PA14
+SYS	Serial Wire	SYS_JTMS-SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+SYS	Dead Battery Signals disabled	SYS_VS_DBSignals	VP_SYS_VS_DBSignals
+TIM15	Internal Clock	TIM15_VS_ClockSourceINT	VP_TIM15_VS_ClockSourceINT
+TIM16	Enable_Timer	TIM16_VS_ClockSourceINT	VP_TIM16_VS_ClockSourceINT
+TIM17	Enable_Timer	TIM17_VS_ClockSourceINT	VP_TIM17_VS_ClockSourceINT
+USART1	Asynchronous	USART1_RX	PA10
+USART1	Asynchronous	USART1_TX	PA9
+USART2	Asynchronous	USART2_RX	PA3
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+5	PA0	GPIO_Output	OLED_DC
+6	PA1	GPIO_Output	OLED_RST
+7	PA2	USART2_TX	USART2_TX [ST-LINKV3E_VCP_RX]
+8	PA3	USART2_RX	USART2_RX [ST-LINKV3E_VCP_TX]
+9	PA4	ADC2_IN17	BAT_DIV
+10	PA5	SPI1_SCK	UI_SCK
+12	PA7	GPIO_Input	VSRC
+18	PA8	GPIO_Output	BRK_CTRL
+19	PA9	USART1_TX	
+20	PA10	USART1_RX	
+21	PA11	GPIO_Output	KEYPAD_PL
+22	PA12	GPIO_Output	OLED_CS
+23	PA13	SYS_JTMS-SWDIO	T_SWDIO
+24	PA14	SYS_JTCK-SWCLK	T_SWCLK
+26	PB3*	SYS_JTDO-SWO	T_SWO
+27	PB4	SPI1_MISO	UI_MISO
+28	PB5	SPI1_MOSI	UI_MOSI
+31	PB8-BOOT0	GPIO_Output	LD2 [green]
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : Blinky
+Project Folder : C:\Users\Kyle\STM32CubeIDE\workspace_1.3.0\Blinky
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_G4 V1.2.0
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : Yes
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
