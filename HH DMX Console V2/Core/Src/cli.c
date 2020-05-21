@@ -12,6 +12,7 @@
 #include "main.h"
 #include "cli.h"
 #include "oled.h"
+#include "usbd_cdc_if.h"
 
 enum CommandSectionCompleteStatus
 {
@@ -68,6 +69,7 @@ int16_t fadeCoefficient[512];
 uint16_t fadeTracker[512];
 uint16_t fadeWaitTicks;
 uint16_t fadeWaitTracker;
+uint8_t newLine[] = "\r\n";
 extern TIM_HandleTypeDef htim17;
 
 void CLI_AddItem(uint16_t function)
@@ -874,6 +876,7 @@ void CLI_AddItem(uint16_t function)
             string[j] = ' ';
             string[j + 1] = '\0';
         }
+        CDC_Transmit_FS(string, strlen(string));
         OLED_ClearLine(1);
         OLED_ClearLine(2);
         OLED_ClearLine(3);

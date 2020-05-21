@@ -19,18 +19,33 @@ void SetTXPin(bool brk)
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-	GPIO_InitStruct.Pin = GPIO_PIN_9;
+	GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = brk ? GPIO_MODE_OUTPUT_PP : GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
-void DMX_UARTCallback()
+void HAL_UART_TxCpltCallback (UART_HandleTypeDef * huart)
 {
 	SetTXPin(true);
 	HAL_TIM_Base_Start_IT(&htim6);
+}
+
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim)
+{
+	if(htim == &htim6)
+	{
+		SetTXPin(false);
+		HAL_TIM_Base_Start_IT(&htim7);
+		HAL_TIM_Base_Stop_IT(&htim6);
+	}
+	if(htim == &htim7)
+	{
+		HAL_UART_Transmit_DMA(&huart1, TXArray, 513);
+		HAL_TIM_Base_Stop_IT(&htim7);
+	}
 }
 
 void DMX_TransitionToMAB()
@@ -42,7 +57,7 @@ void DMX_TransitionToMAB()
 
 void DMX_TransitionToData()
 {
-	HAL_UART_Transmit_DMA(&huart1, TXArray, 513);
+	HAL_UART_Transmit_DMA(&huart1, TXArray, 4);
 	HAL_TIM_Base_Stop_IT(&htim7);
 }
 
@@ -53,5 +68,6 @@ void DMX_Init()
 		  TXArray[i] = 0x00;
 	  }
 
+	  HAL_GPIO_WritePin(GPIOB, DMX_DIR_Pin, GPIO_PIN_SET);
 	  HAL_TIM_Base_Start_IT(&htim7);
 }

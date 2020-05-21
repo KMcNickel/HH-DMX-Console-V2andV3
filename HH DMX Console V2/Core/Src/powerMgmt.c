@@ -11,7 +11,7 @@
 #include "oled.h"
 #include "powerMgmt.h"
 
-extern ADC_HandleTypeDef hadc2;
+extern ADC_HandleTypeDef hadc1;
 #define ADCBAT_DIVIDEND 29
 #define ADCBAT_MINVOLTAGE 65
 #define ADCBAT_RANGEMULTIPLIER 4
@@ -29,7 +29,7 @@ void POWER_CheckStatus()
 {
 	if(HAL_GPIO_ReadPin(GPIOA, VSRC_Pin))
 	{
-		HAL_ADC_Start_IT(&hadc2);
+		HAL_ADC_Start_IT(&hadc1);
 	}
 	else
 	{
@@ -41,9 +41,9 @@ void POWER_CheckStatus()
 
 void POWER_DisplayBatteryStatus()
 {
-	HAL_ADC_Stop_IT(&hadc2);
+	HAL_ADC_Stop_IT(&hadc1);
 	ADCCount++;
-	ADCValue += HAL_ADC_GetValue(&hadc2)  / ADCBAT_DIVIDEND;
+	ADCValue += HAL_ADC_GetValue(&hadc1)  / ADCBAT_DIVIDEND;
 
 	if(ADCCount == ADCBAT_AVERAGINGCOUNT)
 	{

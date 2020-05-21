@@ -25,6 +25,11 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 	UI_SPI_Callback();
 }
 
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	UI_SPI_Callback();
+}
+
 void UI_SPI_Callback()
 {
     switch(curActiveDevice)
