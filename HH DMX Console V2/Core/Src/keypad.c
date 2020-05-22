@@ -16,6 +16,7 @@
 
 enum ButtonState
 {
+    KEYPAD_BUTTON_DEACTIVATED,
     KEYPAD_BUTTON_RELEASED,
     KEYPAD_BUTTON_PRESSED,
     KEYPAD_BUTTON_ACTIVATED,
@@ -85,24 +86,52 @@ void Keypad_SPICallback ()
     for(i = 0; i < 6; i++)
     {
     	uint8_t buttonNum = (columnCounter * 6) + i;
-    	if(((rawKeypadData >> i) & 1) == 1 &&
-				buttonStates[buttonNum] != KEYPAD_BUTTON_ACTIVATED &&
-				buttonStates[buttonNum] != KEYPAD_BUTTON_PROCESSED)
+    	if(((rawKeypadData >> i) & 1) == 1)		//Button is pressed
+    	{
+    		switch(buttonStates[buttonNum])
+    		{
+    			case KEYPAD_BUTTON_DEACTIVATED:
+    				buttonStates[buttonNum] = KEYPAD_BUTTON_PRESSED;
+    				break;
+    			case KEYPAD_BUTTON_RELEASED:
+    				buttonCounter[buttonNum] = 0;
+    				break;
+    			case KEYPAD_BUTTON_PRESSED:
+    				buttonCounter[buttonNum]++;
+    				break;
+    			case KEYPAD_BUTTON_ACTIVATED:
+    			case KEYPAD_BUTTON_PROCESSED:
+    				break;
+    		}
+    	}
+		else if(((rawKeypadData >> i) & 1) == 0)	//Button is released
 		{
-			buttonStates[buttonNum] = KEYPAD_BUTTON_PRESSED;
-			buttonCounter[buttonNum]++;
+			switch(buttonStates[buttonNum])
+			{
+
+				case KEYPAD_BUTTON_RELEASED:
+					buttonCounter[buttonNum]++;
+					break;
+				case KEYPAD_BUTTON_PRESSED:
+					buttonCounter[buttonNum] = 0;
+					break;
+				case KEYPAD_BUTTON_PROCESSED:
+					buttonStates[buttonNum] = KEYPAD_BUTTON_RELEASED;
+					break;
+				case KEYPAD_BUTTON_DEACTIVATED:
+				case KEYPAD_BUTTON_ACTIVATED:
+					break;
+			}
 		}
-		else if(((rawKeypadData >> i) & 1) == 0)
-		{
-			buttonStates[buttonNum] = KEYPAD_BUTTON_RELEASED;
-			buttonCounter[buttonNum] = 0;
-		}
-		if(buttonCounter[buttonNum] == DEBOUNCE_COUNT)
-		{
-			buttonStates[buttonNum] = KEYPAD_BUTTON_ACTIVATED;
-			buttonCounter[buttonNum] = 0;
-		}
-    }
+    	if(buttonCounter[buttonNum] == DEBOUNCE_COUNT)
+    	{
+    		if(buttonStates[buttonNum] == KEYPAD_BUTTON_RELEASED)
+    			buttonStates[buttonNum] = KEYPAD_BUTTON_DEACTIVATED;
+    		if(buttonStates[buttonNum] == KEYPAD_BUTTON_PRESSED)
+    			buttonStates[buttonNum] = KEYPAD_BUTTON_ACTIVATED;
+    		buttonCounter[buttonNum] = 0;
+    	}
+	}
     /*
     for(uint8_t j = 0; j < 3; j++)
     {
@@ -160,7 +189,7 @@ void Keypad_Init()
 	{
 		for(i = 0; i < 8; i++)
 		{
-			buttonStates[(j * 8) + i] = KEYPAD_BUTTON_RELEASED;
+			buttonStates[(j * 8) + i] = KEYPAD_BUTTON_DEACTIVATED;
 			buttonCounter[(j * 8) + i] = 0;
 		}
 	}
