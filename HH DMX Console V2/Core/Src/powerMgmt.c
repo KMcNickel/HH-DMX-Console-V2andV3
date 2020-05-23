@@ -10,12 +10,16 @@
 #include "main.h"
 #include "oled.h"
 #include "powerMgmt.h"
+#include "usb_iface.h"
 
 extern ADC_HandleTypeDef hadc1;
 #define ADCBAT_DIVIDEND 29
 #define ADCBAT_MINVOLTAGE 65
 #define ADCBAT_RANGEMULTIPLIER 4
 #define ADCBAT_AVERAGINGCOUNT 200
+
+extern uint8_t BL_ACT;
+extern uint32_t BL_Count;
 
 uint8_t ADCCount = 0;
 uint32_t ADCValue = 0;

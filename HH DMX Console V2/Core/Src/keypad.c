@@ -31,6 +31,8 @@ uint8_t rawKeypadData;
 extern TIM_HandleTypeDef htim16;
 extern SPI_HandleTypeDef hspi1;
 
+HAL_StatusTypeDef SPIStatus;
+
 #ifdef KEYPAD_STYLE_TRIPLE_165
 uint16_t keypadMapping[] =
 {
@@ -62,7 +64,7 @@ uint16_t keypadMapping[] =
 	uint16_t keypadMapping[23];
 #endif
 
-void TMR16Callback ()
+void Keypad_TIM_PeriodElapsedCallback ()
 {
     HAL_TIM_Base_Stop_IT(&htim16);
     UI_RequestKeypadRead();
@@ -72,9 +74,7 @@ void Keypad_ReadData()
 {
 	columnnData = 1 << columnCounter;
 	HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin, GPIO_PIN_SET);
-	//HAL_SPI_Receive_IT(&hspi1, &rawKeypadData, 1);
-	//HAL_SPI_Transmit_IT(&hspi1, &columnnData, 1);
-	HAL_SPI_TransmitReceive_IT(&hspi1, &columnnData, &rawKeypadData, 1);
+	SPIStatus = HAL_SPI_TransmitReceive_IT(&hspi1, &columnnData, &rawKeypadData, 1);
 }
 
 void Keypad_SPICallback ()
@@ -132,40 +132,11 @@ void Keypad_SPICallback ()
     		buttonCounter[buttonNum] = 0;
     	}
 	}
-    /*
-    for(uint8_t j = 0; j < 3; j++)
-    {
-    	for(i = 0; i < 8; i++)
-		{
-    		uint8_t buttonNum = (j * 8) + i;
-			if(((rawKeypadData[j] >> i) & 1) == 0 &&
-					buttonStates[buttonNum] != KEYPAD_BUTTON_ACTIVATED &&
-					buttonStates[buttonNum] != KEYPAD_BUTTON_PROCESSED)
-			{
-				buttonStates[buttonNum] = KEYPAD_BUTTON_PRESSED;
-				buttonCounter[buttonNum]++;
-			}
-			else if(((rawKeypadData[j] >> i) & 1) == 1)
-			{
-				buttonStates[buttonNum] = KEYPAD_BUTTON_RELEASED;
-				buttonCounter[buttonNum] = 0;
-			}
-			if(buttonCounter[buttonNum] == DEBOUNCE_COUNT)
-			{
-				buttonStates[buttonNum] = KEYPAD_BUTTON_ACTIVATED;
-				buttonCounter[buttonNum] = 0;
-			}
-		}
-    }
-*/
 
     columnCounter++;
+	HAL_TIM_Base_Start_IT(&htim16);
     if(columnCounter == 4)
-    {
     	columnCounter = 0;
-    	HAL_TIM_Base_Start_IT(&htim16);
-    }
-    else UI_RequestKeypadRead();
 }
 
 void Keypad_ProcessButtonPress()

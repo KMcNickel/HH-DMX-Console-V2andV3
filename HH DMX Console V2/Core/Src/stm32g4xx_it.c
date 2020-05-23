@@ -24,9 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ui.h"
-#include "keypad.h"
 #include "cli.h"
-#include "dmx.h"
 #include "powerMgmt.h"
 /* USER CODE END Includes */
 
@@ -277,7 +275,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
   /* USER CODE END TIM1_BRK_TIM15_IRQn 0 */
   HAL_TIM_IRQHandler(&htim15);
   /* USER CODE BEGIN TIM1_BRK_TIM15_IRQn 1 */
-  POWER_CheckStatus();
+
   /* USER CODE END TIM1_BRK_TIM15_IRQn 1 */
 }
 
@@ -291,7 +289,6 @@ void TIM1_UP_TIM16_IRQHandler(void)
   /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
   HAL_TIM_IRQHandler(&htim16);
   /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
-  TMR16Callback ();
   /* USER CODE END TIM1_UP_TIM16_IRQn 1 */
 }
 
@@ -347,7 +344,6 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE END TIM6_DAC_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-  //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }

@@ -13,6 +13,7 @@
 void DMX_UARTCallback();
 void DMX_TransitionToMAB();
 void DMX_TransitionToData();
+void DMX_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim);
 void DMX_Init();
 
 

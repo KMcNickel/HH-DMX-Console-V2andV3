@@ -12,7 +12,7 @@
 #include "main.h"
 #include "cli.h"
 #include "oled.h"
-#include "usbd_cdc_if.h"
+//#include "usbd_cdc_if.h"
 
 enum CommandSectionCompleteStatus
 {
@@ -117,8 +117,18 @@ void CLI_AddItem(uint16_t function)
         }
     }
 
-    void CLI_BtnClear()
+    void CLI_ClearHighlight()
     {
+		*(cliData.values + cliData.highlightedChannel) = cliData.highlightedReturnValue;
+		cliData.highlightedChannel = cliData.highlightedReturnValue = 0;
+		OLED_String("              ", 14, 0, 0);
+		OLED_DrawScreen();
+    }
+
+    void CLI_Clear()
+    {
+    	if(cliData.highlightedChannel != 0)
+    		CLI_ClearHighlight();
         for(cliData.counter = 0;
                 cliData.counter < CLI_MAX_ITEMS; cliData.counter++)
             cliData.command[cliData.counter] = 0;
@@ -941,7 +951,7 @@ void CLI_AddItem(uint16_t function)
         {
             if(function == BtnClear)
             {
-                CLI_BtnClear();
+                CLI_Clear();
                 CLI_PrintCommand();
             }
             else if(function == BtnBksp)

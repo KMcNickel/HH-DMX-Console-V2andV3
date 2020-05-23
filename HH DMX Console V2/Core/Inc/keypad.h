@@ -18,5 +18,6 @@ void TMR16Callback ();
 void Keypad_ProcessButtonPress();
 void Keypad_SPICallback ();
 void Keypad_ReadData();
+void Keypad_TIM_PeriodElapsedCallback ();
 
 #endif /* INC_KEYPAD_H_ */

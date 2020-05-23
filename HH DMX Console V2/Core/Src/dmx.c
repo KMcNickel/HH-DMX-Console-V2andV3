@@ -33,7 +33,7 @@ void HAL_UART_TxCpltCallback (UART_HandleTypeDef * huart)
 	HAL_TIM_Base_Start_IT(&htim6);
 }
 
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim)
+void DMX_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim)
 {
 	if(htim == &htim6)
 	{

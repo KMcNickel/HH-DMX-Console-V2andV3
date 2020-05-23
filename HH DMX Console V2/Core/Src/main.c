@@ -29,6 +29,8 @@
 #include "ui.h"
 #include "keypad.h"
 #include "dmx.h"
+#include "usb_iface.h"
+#include "powerMgmt.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,6 +64,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE BEGIN PV */
 extern uint8_t __attribute__ ((aligned(32))) TXArray[513];
+extern uint8_t switchToBootloader;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,7 +85,15 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
+{
+	if(htim == &htim6 || htim == &htim7)
+		DMX_TIM_PeriodElapsedCallback(htim);
+	if(htim == &htim16)
+		Keypad_TIM_PeriodElapsedCallback();
+	//if(htim == &htim15)
+		//POWER_CheckStatus();
+}
 
 /* USER CODE END 0 */
 
@@ -93,7 +104,8 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+if(switchToBootloader == 0x11)
+	USB_BootloaderInit();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -127,13 +139,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   DMX_Init();
-
   UI_Init();
   CLI_Init(TXArray);
+
   while(!OLED_IsReady())
     UI_ProcessQueue();
 
-  HAL_TIM_Base_Start_IT(&htim15);
+  HAL_TIM_Base_Start_IT(&htim15);	//Power management 5ms pulse
 
   /* USER CODE END 2 */
 
@@ -293,7 +305,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
