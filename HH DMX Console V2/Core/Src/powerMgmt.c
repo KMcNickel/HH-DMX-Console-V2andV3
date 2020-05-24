@@ -33,6 +33,7 @@ enum powerStates
 } curPowerState;
 uint8_t curBatteryLevel;
 uint8_t finalBatteryLevel;
+uint8_t initCount;
 
 void HAL_ADC_ConvCpltCallback (ADC_HandleTypeDef * hadc)
 {
@@ -70,7 +71,14 @@ void POWER_DisplayBatteryStatus()
 
 	if(ADCCount >= ADCBAT_AVERAGINGCOUNT)
 	{
-		ADCValue = ((ADCValue  / ADCCount) - ADCBAT_MINVOLTAGE) * ADCBAT_RANGEMULTIPLIER;
+		ADCValue = (ADCValue  / ADCCount);
+		if(ADCValue < ADCBAT_MINVOLTAGE) ADCValue = 0;
+		else ADCValue = (ADCValue- ADCBAT_MINVOLTAGE) * ADCBAT_RANGEMULTIPLIER;
+		if(initCount != 3)
+		{
+			initCount++;
+			return;
+		}
 		if(curBatteryLevel != 0) ADCValue = ((curBatteryLevel * 2) + ADCValue) / 3;
 		finalBatteryLevel = ADCValue;
 		ADCCount = ADCValue = 0;
