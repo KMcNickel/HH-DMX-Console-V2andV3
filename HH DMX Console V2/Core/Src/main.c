@@ -91,8 +91,8 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 		DMX_TIM_PeriodElapsedCallback(htim);
 	if(htim == &htim16)
 		Keypad_TIM_PeriodElapsedCallback();
-	//if(htim == &htim15)
-		//POWER_CheckStatus();
+	if(htim == &htim15)
+		POWER_CheckStatus();
 }
 
 /* USER CODE END 0 */
@@ -138,15 +138,13 @@ if(switchToBootloader == 0x11)
   MX_USB_Device_Init();
   /* USER CODE BEGIN 2 */
 
-  DMX_Init();
   UI_Init();
-  CLI_Init(TXArray);
-
   while(!OLED_IsReady())
     UI_ProcessQueue();
 
-  HAL_TIM_Base_Start_IT(&htim15);	//Power management 5ms pulse
-
+  DMX_Init();
+  CLI_Init(TXArray);
+  POWER_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -419,7 +417,7 @@ static void MX_TIM15_Init(void)
   htim15.Instance = TIM15;
   htim15.Init.Prescaler = 1000;
   htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim15.Init.Period = 850;
+  htim15.Init.Period = 1700;
   htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim15.Init.RepetitionCounter = 0;
   htim15.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;

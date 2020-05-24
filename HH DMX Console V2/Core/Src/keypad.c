@@ -134,9 +134,11 @@ void Keypad_SPICallback ()
 	}
 
     columnCounter++;
-	HAL_TIM_Base_Start_IT(&htim16);
     if(columnCounter == 4)
+    {
     	columnCounter = 0;
+    	HAL_TIM_Base_Start_IT(&htim16);
+    } else UI_RequestKeypadRead();
 }
 
 void Keypad_ProcessButtonPress()
