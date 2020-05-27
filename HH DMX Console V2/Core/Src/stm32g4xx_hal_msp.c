@@ -92,30 +92,19 @@ void HAL_MspInit(void)
 */
 void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(hadc->Instance==ADC1)
+  if(hadc->Instance==ADC2)
   {
-  /* USER CODE BEGIN ADC1_MspInit 0 */
+  /* USER CODE BEGIN ADC2_MspInit 0 */
 
-  /* USER CODE END ADC1_MspInit 0 */
+  /* USER CODE END ADC2_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_ADC12_CLK_ENABLE();
-  
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**ADC1 GPIO Configuration    
-    PB0     ------> ADC1_IN15 
-    */
-    GPIO_InitStruct.Pin = BAT_DIV_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BAT_DIV_GPIO_Port, &GPIO_InitStruct);
-
-    /* ADC1 interrupt Init */
+    /* ADC2 interrupt Init */
     HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
-  /* USER CODE BEGIN ADC1_MspInit 1 */
+  /* USER CODE BEGIN ADC2_MspInit 1 */
 
-  /* USER CODE END ADC1_MspInit 1 */
+  /* USER CODE END ADC2_MspInit 1 */
   }
 
 }
@@ -128,24 +117,76 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 */
 void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 {
-  if(hadc->Instance==ADC1)
+  if(hadc->Instance==ADC2)
   {
-  /* USER CODE BEGIN ADC1_MspDeInit 0 */
+  /* USER CODE BEGIN ADC2_MspDeInit 0 */
 
-  /* USER CODE END ADC1_MspDeInit 0 */
+  /* USER CODE END ADC2_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_ADC12_CLK_DISABLE();
+
+    /* ADC2 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(ADC1_2_IRQn);
+  /* USER CODE BEGIN ADC2_MspDeInit 1 */
+
+  /* USER CODE END ADC2_MspDeInit 1 */
+  }
+
+}
+
+/**
+* @brief OPAMP MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hopamp: OPAMP handle pointer
+* @retval None
+*/
+void HAL_OPAMP_MspInit(OPAMP_HandleTypeDef* hopamp)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(hopamp->Instance==OPAMP2)
+  {
+  /* USER CODE BEGIN OPAMP2_MspInit 0 */
+
+  /* USER CODE END OPAMP2_MspInit 0 */
   
-    /**ADC1 GPIO Configuration    
-    PB0     ------> ADC1_IN15 
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    /**OPAMP2 GPIO Configuration    
+    PB0     ------> OPAMP2_VINP 
+    */
+    GPIO_InitStruct.Pin = BAT_DIV_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(BAT_DIV_GPIO_Port, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN OPAMP2_MspInit 1 */
+
+  /* USER CODE END OPAMP2_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief OPAMP MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hopamp: OPAMP handle pointer
+* @retval None
+*/
+void HAL_OPAMP_MspDeInit(OPAMP_HandleTypeDef* hopamp)
+{
+  if(hopamp->Instance==OPAMP2)
+  {
+  /* USER CODE BEGIN OPAMP2_MspDeInit 0 */
+
+  /* USER CODE END OPAMP2_MspDeInit 0 */
+  
+    /**OPAMP2 GPIO Configuration    
+    PB0     ------> OPAMP2_VINP 
     */
     HAL_GPIO_DeInit(BAT_DIV_GPIO_Port, BAT_DIV_Pin);
 
-    /* ADC1 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(ADC1_2_IRQn);
-  /* USER CODE BEGIN ADC1_MspDeInit 1 */
+  /* USER CODE BEGIN OPAMP2_MspDeInit 1 */
 
-  /* USER CODE END ADC1_MspDeInit 1 */
+  /* USER CODE END OPAMP2_MspDeInit 1 */
   }
 
 }

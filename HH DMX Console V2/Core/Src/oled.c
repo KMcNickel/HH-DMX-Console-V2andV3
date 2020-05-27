@@ -168,15 +168,13 @@ void OLED_DrawPowerSymbolPlug(unsigned char column, unsigned char page)
 		OLED_Buffer[i + (column + (page * 128))] = plug[i];
 }
 
-void OLED_DrawPowerSymbolBattery(uint8_t percentage, unsigned char column, unsigned char page)
+void OLED_DrawPowerSymbolBattery(uint8_t bars, unsigned char column, unsigned char page)
 {
 	unsigned char i;
-	if(percentage > 100) percentage = 100;
-	percentage /= 10;
-	if(percentage != 0) percentage -= 1;
+	if(bars > 8) bars = 8;
 	for(i = 0; i < 10; i++)
 		OLED_Buffer[i + (column + (page * 128))] = empty_battery[i];
-	for(i = 0; i < percentage; i++)
+	for(i = 0; i <= bars; i++)
 	{
 		OLED_Buffer[i + (column + (page * 128))] = battery_bar;
 	}
