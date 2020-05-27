@@ -845,10 +845,10 @@ void CLI_AddItem(uint16_t function)
                 strcpy(str, "Clear");
                 break;
             case BtnPlus:
-                strcpy(str, "Plus");
+                strcpy(str, "+");
                 break;
             case BtnMinus:
-                strcpy(str, "Minus");
+                strcpy(str, "-");
                 break;
             case BtnLast:
                 strcpy(str, "Last *");
@@ -959,7 +959,7 @@ void CLI_AddItem(uint16_t function)
                 CLI_RemoveLastItem();
                 CLI_PrintCommand();
             }
-            else if(function == BtnFull || function == BtnLast || function == BtnNext)
+            else if(function == BtnFull || function == BtnLast || function == BtnNext || function == BtnEnter)
             {
                 CLI_AddItem(function);
                 if(CLI_ProcessCommand())
@@ -973,18 +973,6 @@ void CLI_AddItem(uint16_t function)
                 	CLI_RemoveLastItem();
                 	CLI_PrintError(function);
                 }
-            }
-            else if(function == BtnEnter)
-            {
-                CLI_AddItem(function);
-                if(CLI_ProcessCommand())
-                {
-                    CLI_PrintCommand();
-                }
-                else
-                    CLI_PrintError(function);
-                cliData.counter = 0;
-                cliData.command[0] = 0;
             }
             else
             {
