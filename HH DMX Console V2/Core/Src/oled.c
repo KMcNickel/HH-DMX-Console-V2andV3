@@ -44,7 +44,7 @@ void OLED_CommandArray_Write(unsigned char * cmd, uint16_t size)
 {
 	HAL_GPIO_WritePin(GPIOA, OLED_DC_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, OLED_CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit_IT(&hspi1, cmd, size);
+	HAL_SPI_Transmit_DMA(&hspi1, cmd, size);
 }
 
 void OLED_Command_Write(unsigned char cmd)
@@ -56,7 +56,7 @@ void OLED_DataArray_Write(unsigned char * data, uint16_t size)
 {
 	HAL_GPIO_WritePin(GPIOA, OLED_DC_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, OLED_CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit_IT(&hspi1, data, size);
+	HAL_SPI_Transmit_DMA(&hspi1, data, size);
 }
 
 void OLED_Data_Write(unsigned char data)
@@ -158,6 +158,47 @@ void OLED_String(char* str, unsigned char len, unsigned char column, unsigned ch
                 follower++;
         }
         follower++;
+    }
+}
+
+void OLED_StringAutoLine(char* str, unsigned char len, unsigned char column, unsigned char page,  unsigned char maxLines)
+{
+    char* strFollower = str;
+    char charCount = 0, colCount = column;
+    uint8_t curLine = 1;
+    while(strFollower != str + len)
+    {
+    	if(!(*strFollower == ' ' && charCount == 0))
+    	{
+    		OLED_CharASCII(*strFollower, colCount, page);
+			colCount += 6;
+			charCount++;
+    	}
+    	strFollower++;
+    	if(charCount >= 21)
+    	{
+    		for(uint8_t i = 0; i < 8; i++)
+    		{
+    			if(*(strFollower - i) == ' ')
+				{
+    				charCount -= i;
+    				colCount -= i * 6;
+    				for(; charCount < 21; charCount++)
+    				{
+    					OLED_CharASCII(' ', colCount, page);
+    					colCount += 6;
+    				}
+    				strFollower -= i;
+    				break;
+				}
+    		}
+    		curLine++;
+    		page++;
+    		charCount = 0;
+    		colCount = column;
+    		if(curLine > maxLines)
+    			return;
+    	}
     }
 }
 

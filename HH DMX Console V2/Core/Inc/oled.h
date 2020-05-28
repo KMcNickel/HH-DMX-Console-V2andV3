@@ -56,6 +56,7 @@ void OLED_Fill();
 void OLED_Char(unsigned char* character, unsigned char column, unsigned char page);
 void OLED_CharASCII(char character, unsigned char column, unsigned char page);
 void OLED_String(char* str, unsigned char len, unsigned char column, unsigned char page);
+void OLED_StringAutoLine(char* str, unsigned char len, unsigned char column, unsigned char page,  unsigned char maxLines);
 bool OLED_IsReady();
 void OLED_ClearLine(unsigned char line);
 void OLED_SPICallback();

@@ -822,7 +822,7 @@ void CLI_AddItem(uint16_t function)
         return true;
     }
 
-    char* CLI_FunctionToString(uint16_t function, char* str)
+    uint8_t CLI_FunctionToString(uint16_t function, char* str)
     {
         switch(function)
         {
@@ -878,7 +878,8 @@ void CLI_AddItem(uint16_t function)
     void CLI_PrintCommand()
     {
         char string[64] = "";
-        uint8_t i, j;
+        uint8_t i, j = 0;
+
         for(i = 0; i < cliData.counter; i++)
         {
             CLI_FunctionToString(cliData.command[i], string + strlen(string));
@@ -886,11 +887,14 @@ void CLI_AddItem(uint16_t function)
             string[j] = ' ';
             string[j + 1] = '\0';
         }
+        string[j] = '\0';
+
         CDC_Transmit_FS(string, strlen(string));
+
         OLED_ClearLine(1);
         OLED_ClearLine(2);
         OLED_ClearLine(3);
-        OLED_String(string, strlen(string), 0, 1);
+        OLED_StringAutoLine(string, strlen(string), 0, 1, 3);
         OLED_DrawScreen();
     }
 
