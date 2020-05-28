@@ -35,8 +35,6 @@ enum powerStates
 uint8_t curBatteryLevel;
 uint8_t finalBatteryLevel;
 uint8_t initCount;
-uint16_t adcVal[3000];
-uint16_t adcValCount;
 
 void HAL_ADC_ConvCpltCallback (ADC_HandleTypeDef * hadc)
 {

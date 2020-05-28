@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "oled.h"
+#include "stdio.h"
 #include "cli.h"
 #include "ui.h"
 #include "keypad.h"
@@ -96,6 +97,14 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 		Keypad_TIM_PeriodElapsedCallback();
 	if(htim == &htim15)
 		POWER_CheckStatus();
+}
+
+int _write(int file, char *ptr, int len)
+{
+	int i = 0;
+	for(i = 0; i < len; i++)
+		ITM_SendChar((*ptr++));
+	return len;
 }
 
 /* USER CODE END 0 */
