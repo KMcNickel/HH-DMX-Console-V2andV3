@@ -302,7 +302,7 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
   /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
   HAL_TIM_IRQHandler(&htim17);
   /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
-  CLI_Timer_Callback();
+
   /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
 }
 

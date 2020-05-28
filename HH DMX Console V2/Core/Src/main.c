@@ -97,16 +97,9 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 		Keypad_TIM_PeriodElapsedCallback();
 	if(htim == &htim15)
 		POWER_CheckStatus();
+	if(htim == &htim17)
+		CLI_Timer_Callback ();
 }
-
-int _write(int file, char *ptr, int len)
-{
-	int i = 0;
-	for(i = 0; i < len; i++)
-		ITM_SendChar((*ptr++));
-	return len;
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -248,7 +241,7 @@ static void MX_ADC2_Init(void)
   /** Common config 
   */
   hadc2.Instance = ADC2;
-  hadc2.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV32;
+  hadc2.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV256;
   hadc2.Init.Resolution = ADC_RESOLUTION_12B;
   hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc2.Init.GainCompensation = 0;
@@ -262,7 +255,11 @@ static void MX_ADC2_Init(void)
   hadc2.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc2.Init.DMAContinuousRequests = DISABLE;
   hadc2.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc2.Init.OversamplingMode = DISABLE;
+  hadc2.Init.OversamplingMode = ENABLE;
+  hadc2.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_128;
+  hadc2.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_7;
+  hadc2.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+  hadc2.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
   if (HAL_ADC_Init(&hadc2) != HAL_OK)
   {
     Error_Handler();
@@ -452,7 +449,7 @@ static void MX_TIM15_Init(void)
 
   /* USER CODE END TIM15_Init 1 */
   htim15.Instance = TIM15;
-  htim15.Init.Prescaler = 1000;
+  htim15.Init.Prescaler = 10000;
   htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim15.Init.Period = 1700;
   htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

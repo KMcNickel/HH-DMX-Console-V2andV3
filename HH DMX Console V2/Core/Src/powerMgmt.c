@@ -15,15 +15,11 @@
 extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim15;
 extern OPAMP_HandleTypeDef hopamp2;
+								//Note that voltage will be lower while loaded down
 #define ADCBAT_DIVIDEND 32		//Min/Max have been adjusted as this will give 0.1V lower than correct
-#define ADCBAT_MINVOLTAGE 69
-#define ADCBAT_MAXVOLTAGE 84
-#define ADCBAT_AVERAGINGCOUNT 100
+#define ADCBAT_MINVOLTAGE 66	//6.8V or less = 0 bars
+#define ADCBAT_MAXVOLTAGE 82	//8.3V or more = 8 bars
 
-extern uint8_t BL_ACT;
-extern uint32_t BL_Count;
-
-uint16_t ADCCount = 0;
 uint32_t ADCValue = 0;
 
 enum powerStates
@@ -39,7 +35,12 @@ uint8_t initCount;
 void HAL_ADC_ConvCpltCallback (ADC_HandleTypeDef * hadc)
 {
 	HAL_ADC_Stop_IT(&hadc2);
-	POWER_DisplayBatteryStatus();
+
+	ADCValue = HAL_ADC_GetValue(&hadc2) / ADCBAT_DIVIDEND;
+
+	if(finalBatteryLevel != 0) ADCValue = ((finalBatteryLevel * 2) + ADCValue) / 3;
+	finalBatteryLevel = ADCValue;
+
 	HAL_TIM_Base_Start_IT(&htim15);
 }
 
@@ -55,7 +56,7 @@ void POWER_UpdateStatus(enum powerStates newPowerState, uint8_t newBatteryLevel)
 	{
 		if(newBatteryLevel <= ADCBAT_MINVOLTAGE) newBatteryLevel = 0;
 		else if(newBatteryLevel >= ADCBAT_MAXVOLTAGE) newBatteryLevel = 8;
-		else newBatteryLevel = ((newBatteryLevel - ADCBAT_MINVOLTAGE) + 1 ) / 2;
+		else newBatteryLevel = (newBatteryLevel - ADCBAT_MINVOLTAGE) / 2;
 		if(newPowerState == POWER_STATE_BATTERY && (curPowerState != POWER_STATE_BATTERY
 				|| newBatteryLevel != curBatteryLevel))
 		{
@@ -74,21 +75,6 @@ void POWER_CheckStatus()
 		POWER_UpdateStatus(POWER_STATE_BATTERY, finalBatteryLevel);
 	else POWER_UpdateStatus(POWER_STATE_USB, 0);
 	HAL_ADC_Start_IT(&hadc2);
-}
-
-void POWER_DisplayBatteryStatus()
-{
-	ADCCount++;
-	ADCValue += HAL_ADC_GetValue(&hadc2);
-
-	if(ADCCount >= ADCBAT_AVERAGINGCOUNT)
-	{
-		ADCValue = (ADCValue / (ADCCount * ADCBAT_DIVIDEND));
-
-		if(finalBatteryLevel != 0) ADCValue = ((finalBatteryLevel * 2) + ADCValue) / 3;
-		finalBatteryLevel = ADCValue;
-		ADCCount = ADCValue = 0;
-	}
 }
 
 void POWER_Init()
