@@ -49,6 +49,7 @@
 
 
 void OLED_Init();
+void OLED_InitafterReset();
 bool OLED_DrawScreen();
 void OLED_Checkerboard();
 void OLED_Blank();

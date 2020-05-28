@@ -340,8 +340,12 @@ void OLED_WriteData()
 void OLED_Init()
 {
 	HAL_GPIO_WritePin(GPIOA, OLED_RST_Pin, GPIO_PIN_RESET);
-    uint16_t i;
-    for(i = 0; i != 65535; i++);
+	OLEDResetState = OLED_RESET_WAITING;
+}
+
+void OLED_InitafterReset()
+{
+	OLEDResetState = OLED_RESET_DONE;
 	HAL_GPIO_WritePin(GPIOA, OLED_RST_Pin, GPIO_PIN_SET);
 
     OLED_Sys_State = OLED_STATE_InitList;

@@ -14,6 +14,7 @@
 enum activeDevice curActiveDevice;
 bool KeypadWaiting;
 bool OLEDWaiting;
+extern TIM_HandleTypeDef htim16;
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
@@ -57,6 +58,15 @@ void UI_RequestOLEDWrite()
     OLEDWaiting = true;
 }
 
+void UI_TimerCallback()
+{
+	Keypad_TIM_PeriodElapsedCallback();
+	if(OLEDResetState == OLED_RESET_WAITING)
+		OLEDResetState = OLED_RESET_ACTIVE;
+	if(OLEDResetState == OLED_RESET_ACTIVE)
+		OLED_InitafterReset();
+}
+
 void UI_ProcessQueue()
 {
     if(curActiveDevice != UI_DEVICE_NONE)
@@ -77,6 +87,7 @@ void UI_ProcessQueue()
 
 void UI_Init()
 {
+    HAL_TIM_Base_Start_IT(&htim16);
     OLED_Init();
     Keypad_Init();
 }

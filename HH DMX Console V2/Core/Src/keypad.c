@@ -29,8 +29,8 @@ uint8_t buttonCounter[24];
 uint8_t columnCounter;
 uint8_t columnnData;
 uint8_t rawKeypadData;
-extern TIM_HandleTypeDef htim16;
 extern SPI_HandleTypeDef hspi1;
+extern TIM_HandleTypeDef htim16;
 
 HAL_StatusTypeDef SPIStatus;
 
@@ -169,5 +169,4 @@ void Keypad_Init()
 	}
 
     HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin, GPIO_PIN_RESET);
-    HAL_TIM_Base_Start_IT(&htim16);
 }

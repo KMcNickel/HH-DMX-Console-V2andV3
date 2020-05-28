@@ -17,6 +17,13 @@ enum activeDevice
     UI_DEVICE_KEYPAD,
     UI_DEVICE_OLED
 };
+enum
+{
+	OLED_RESET_INACTIVE,
+	OLED_RESET_WAITING,
+	OLED_RESET_ACTIVE,
+	OLED_RESET_DONE
+} OLEDResetState;
 
 void UI_Init();
 bool UI_SetActiveDevice(enum activeDevice device);
@@ -24,5 +31,6 @@ void UI_RequestKeypadRead();
 void UI_ProcessQueue();
 void UI_RequestOLEDWrite();
 void UI_SPI_Callback();
+void UI_TimerCallback();
 
 #endif /* INC_UI_H_ */

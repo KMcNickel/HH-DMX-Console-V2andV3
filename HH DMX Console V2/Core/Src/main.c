@@ -91,14 +91,25 @@ static void MX_OPAMP2_Init(void);
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
-	if(htim == &htim6 || htim == &htim7)
+	if(htim == &htim6 || htim == &htim7)	//12uS and 92uS
 		DMX_TIM_PeriodElapsedCallback(htim);
-	if(htim == &htim16)
-		Keypad_TIM_PeriodElapsedCallback();
-	if(htim == &htim15)
+	if(htim == &htim16)						//5mS
+		UI_TimerCallback();
+	if(htim == &htim15)						//500mS
 		POWER_CheckStatus();
-	if(htim == &htim17)
+	if(htim == &htim17)						//7.8125mS
 		CLI_Timer_Callback ();
+}
+
+int _write(int file, char *ptr, int len)
+{
+	int DataIdx;
+
+	for (DataIdx = 0; DataIdx < len; DataIdx++)
+	{
+		ITM_SendChar(*ptr++);
+	}
+	return len;
 }
 /* USER CODE END 0 */
 
@@ -151,6 +162,7 @@ if(switchToBootloader == 0x11)
   DMX_Init();
   CLI_Init(TXArray);
   POWER_Init();
+  printf("Initialization Complete\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
