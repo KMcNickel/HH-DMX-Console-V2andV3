@@ -71,9 +71,9 @@ void POWER_UpdateStatus(enum powerStates newPowerState, uint8_t newBatteryLevel)
 void POWER_CheckStatus()
 {
 	HAL_TIM_Base_Stop_IT(&htim15);
-	if(HAL_GPIO_ReadPin(GPIOA, VSRC_Pin))
-		POWER_UpdateStatus(POWER_STATE_BATTERY, finalBatteryLevel);
-	else POWER_UpdateStatus(POWER_STATE_USB, 0);
+	if(HAL_GPIO_ReadPin(GPIOA, USB_VCC_DETECT_Pin))
+		POWER_UpdateStatus(POWER_STATE_USB, 0);
+	else POWER_UpdateStatus(POWER_STATE_BATTERY, finalBatteryLevel);
 	HAL_ADC_Start_IT(&hadc2);
 }
 

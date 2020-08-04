@@ -59,26 +59,30 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define OLED_RST_Pin GPIO_PIN_1
-#define OLED_RST_GPIO_Port GPIOA
+#define KEYPAD_PL_Pin GPIO_PIN_0
+#define KEYPAD_PL_GPIO_Port GPIOA
+#define MEM_CS_Pin GPIO_PIN_1
+#define MEM_CS_GPIO_Port GPIOA
 #define OLED_DC_Pin GPIO_PIN_2
 #define OLED_DC_GPIO_Port GPIOA
-#define OLED_CS_Pin GPIO_PIN_3
+#define OLED_RST_Pin GPIO_PIN_3
+#define OLED_RST_GPIO_Port GPIOA
+#define OLED_CS_Pin GPIO_PIN_4
 #define OLED_CS_GPIO_Port GPIOA
-#define KEYPAD_PL_Pin GPIO_PIN_4
-#define KEYPAD_PL_GPIO_Port GPIOA
 #define UI_SCK_Pin GPIO_PIN_5
 #define UI_SCK_GPIO_Port GPIOA
 #define UI_MISO_Pin GPIO_PIN_6
 #define UI_MISO_GPIO_Port GPIOA
 #define UI_MOSI_Pin GPIO_PIN_7
 #define UI_MOSI_GPIO_Port GPIOA
-#define BAT_DIV_Pin GPIO_PIN_0
-#define BAT_DIV_GPIO_Port GPIOB
-#define VSRC_Pin GPIO_PIN_8
-#define VSRC_GPIO_Port GPIOA
+#define BAT_IN_Pin GPIO_PIN_0
+#define BAT_IN_GPIO_Port GPIOB
+#define PBSTAT_Pin GPIO_PIN_8
+#define PBSTAT_GPIO_Port GPIOA
 #define USB_VCC_DETECT_Pin GPIO_PIN_9
 #define USB_VCC_DETECT_GPIO_Port GPIOA
+#define PWRON_Pin GPIO_PIN_10
+#define PWRON_GPIO_Port GPIOA
 #define T_SWDIO_Pin GPIO_PIN_13
 #define T_SWDIO_GPIO_Port GPIOA
 #define T_SWCLK_Pin GPIO_PIN_14

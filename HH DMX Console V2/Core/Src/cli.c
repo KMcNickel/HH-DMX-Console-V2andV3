@@ -12,7 +12,7 @@
 #include "main.h"
 #include "cli.h"
 #include "oled.h"
-//#include "usbd_cdc_if.h"
+#include "usbd_cdc_if.h"
 
 enum CommandSectionCompleteStatus
 {
@@ -822,7 +822,7 @@ void CLI_AddItem(uint16_t function)
         return true;
     }
 
-    uint8_t CLI_FunctionToString(uint16_t function, char* str)
+    char* CLI_FunctionToString(uint16_t function, char* str)
     {
         switch(function)
         {
@@ -889,7 +889,7 @@ void CLI_AddItem(uint16_t function)
         }
         string[j] = '\0';
 
-        CDC_Transmit_FS(string, strlen(string));
+        CDC_Transmit_FS((uint8_t*) string, strlen(string));
 
         OLED_ClearLine(1);
         OLED_ClearLine(2);

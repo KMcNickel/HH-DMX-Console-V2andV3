@@ -120,7 +120,7 @@ int _write(int file, char *ptr, int len)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-if(switchToBootloader == 0x11)
+	if(switchToBootloader == 0x11)
 	USB_BootloaderInit();
   /* USER CODE END 1 */
 
@@ -349,7 +349,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -636,7 +636,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, OLED_RST_Pin|OLED_DC_Pin|OLED_CS_Pin|KEYPAD_PL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin|OLED_DC_Pin|OLED_RST_Pin|OLED_CS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin|PWRON_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(DMX_DIR_GPIO_Port, DMX_DIR_Pin, GPIO_PIN_RESET);
@@ -647,30 +650,39 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA10 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_10|GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : OLED_RST_Pin OLED_DC_Pin OLED_CS_Pin KEYPAD_PL_Pin */
-  GPIO_InitStruct.Pin = OLED_RST_Pin|OLED_DC_Pin|OLED_CS_Pin|KEYPAD_PL_Pin;
+  /*Configure GPIO pins : KEYPAD_PL_Pin MEM_CS_Pin OLED_DC_Pin OLED_RST_Pin 
+                           OLED_CS_Pin */
+  GPIO_InitStruct.Pin = KEYPAD_PL_Pin|MEM_CS_Pin|OLED_DC_Pin|OLED_RST_Pin 
+                          |OLED_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : VSRC_Pin */
-  GPIO_InitStruct.Pin = VSRC_Pin;
+  /*Configure GPIO pin : PBSTAT_Pin */
+  GPIO_InitStruct.Pin = PBSTAT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(VSRC_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(PBSTAT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : USB_VCC_DETECT_Pin */
   GPIO_InitStruct.Pin = USB_VCC_DETECT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_VCC_DETECT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PWRON_Pin */
+  GPIO_InitStruct.Pin = PWRON_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(PWRON_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB4 PB8 */
   GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_8;

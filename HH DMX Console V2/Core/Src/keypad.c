@@ -13,7 +13,7 @@
 #include "ui.h"
 #include "cli.h"
 
-#define KEYPAD_STYLE_TRUEPCB
+#define KEYPAD_STYLE_VERSION3
 
 enum ButtonState
 {
@@ -26,8 +26,8 @@ enum ButtonState
 
 enum ButtonState buttonStates[24];
 uint8_t buttonCounter[24];
-uint8_t columnCounter;
-uint8_t columnnData;
+uint8_t rowCounter;
+uint8_t rowData;
 uint8_t rawKeypadData;
 extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim16;
@@ -61,6 +61,17 @@ uint16_t keypadMapping[] =
 	BtnOffset, BtnLast, 9, 3, BtnBksp, 6
 };
 #endif
+#ifdef KEYPAD_STYLE_VERSION3
+uint16_t keypadMapping[] =
+{
+	BtnThru, 9, 8, 7,
+	BtnTime, BtnOffset, BtnRecord, BtnPreset,
+	BtnNext, BtnLast, BtnPlus, BtnMinus,
+	BtnAt, 6, 5, 4,
+	BtnEnter, BtnClear, 0, BtnBksp,
+	BtnFull, 3, 2, 1
+};
+#endif
 #ifdef KEYPAD_STYLE_MEMBRANE
 	uint16_t keypadMapping[23];
 #endif
@@ -73,9 +84,9 @@ void Keypad_TIM_PeriodElapsedCallback ()
 
 void Keypad_ReadData()
 {
-	columnnData = 1 << columnCounter;
+	rowData = 1 << rowCounter;
 	HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin, GPIO_PIN_SET);
-	SPIStatus = HAL_SPI_TransmitReceive_IT(&hspi1, &columnnData, &rawKeypadData, 1);
+	SPIStatus = HAL_SPI_TransmitReceive_IT(&hspi1, &rowData, &rawKeypadData, 1);
 }
 
 void Keypad_SPICallback ()
@@ -84,9 +95,9 @@ void Keypad_SPICallback ()
 
     HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin, GPIO_PIN_RESET);
 
-    for(i = 0; i < 6; i++)
+    for(i = 0; i < 4; i++)
     {
-    	uint8_t buttonNum = (columnCounter * 6) + i;
+    	uint8_t buttonNum = (rowCounter * 4) + i;
     	if(((rawKeypadData >> i) & 1) == 1)		//Button is pressed
     	{
     		switch(buttonStates[buttonNum])
@@ -134,10 +145,10 @@ void Keypad_SPICallback ()
     	}
 	}
 
-    columnCounter++;
-    if(columnCounter == 4)
+    rowCounter++;
+    if(rowCounter == 6)
     {
-    	columnCounter = 0;
+    	rowCounter = 0;
     	HAL_TIM_Base_Start_IT(&htim16);
     } else UI_RequestKeypadRead();
 }

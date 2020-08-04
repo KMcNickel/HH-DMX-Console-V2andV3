@@ -153,10 +153,10 @@ void HAL_OPAMP_MspInit(OPAMP_HandleTypeDef* hopamp)
     /**OPAMP2 GPIO Configuration    
     PB0     ------> OPAMP2_VINP 
     */
-    GPIO_InitStruct.Pin = BAT_DIV_Pin;
+    GPIO_InitStruct.Pin = BAT_IN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(BAT_DIV_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(BAT_IN_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN OPAMP2_MspInit 1 */
 
@@ -182,7 +182,7 @@ void HAL_OPAMP_MspDeInit(OPAMP_HandleTypeDef* hopamp)
     /**OPAMP2 GPIO Configuration    
     PB0     ------> OPAMP2_VINP 
     */
-    HAL_GPIO_DeInit(BAT_DIV_GPIO_Port, BAT_DIV_Pin);
+    HAL_GPIO_DeInit(BAT_IN_GPIO_Port, BAT_IN_Pin);
 
   /* USER CODE BEGIN OPAMP2_MspDeInit 1 */
 
