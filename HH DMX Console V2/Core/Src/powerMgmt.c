@@ -16,9 +16,9 @@ extern ADC_HandleTypeDef hadc2;
 extern TIM_HandleTypeDef htim15;
 extern OPAMP_HandleTypeDef hopamp2;
 								//Note that voltage will be lower while loaded down
-#define ADCBAT_DIVIDEND 32		//Min/Max have been adjusted as this will give 0.1V lower than correct
-#define ADCBAT_MINVOLTAGE 66	//6.8V or less = 0 bars
-#define ADCBAT_MAXVOLTAGE 82	//8.3V or more = 8 bars
+#define ADCBAT_DIVIDEND 125
+#define ADCBAT_MINVOLTAGE 21	//2.00V or less = 0 bars
+#define ADCBAT_MAXVOLTAGE 29	//3.00V or more = 8 bars
 
 uint32_t ADCValue = 0;
 bool PwrWasReleased = 0;
@@ -57,7 +57,7 @@ void POWER_UpdateStatus(enum powerStates newPowerState, uint8_t newBatteryLevel)
 	{
 		if(newBatteryLevel <= ADCBAT_MINVOLTAGE) newBatteryLevel = 0;
 		else if(newBatteryLevel >= ADCBAT_MAXVOLTAGE) newBatteryLevel = 8;
-		else newBatteryLevel = (newBatteryLevel - ADCBAT_MINVOLTAGE) / 2;
+		else newBatteryLevel = (newBatteryLevel - ADCBAT_MINVOLTAGE);
 		if(newPowerState == POWER_STATE_BATTERY && (curPowerState != POWER_STATE_BATTERY
 				|| newBatteryLevel != curBatteryLevel))
 		{
