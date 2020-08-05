@@ -21,6 +21,7 @@ extern OPAMP_HandleTypeDef hopamp2;
 #define ADCBAT_MAXVOLTAGE 82	//8.3V or more = 8 bars
 
 uint32_t ADCValue = 0;
+bool PwrWasReleased = 0;
 
 enum powerStates
 {
@@ -82,4 +83,21 @@ void POWER_Init()
 	HAL_OPAMP_Start(&hopamp2);
 	HAL_ADCEx_Calibration_Start(&hadc2, ADC_SINGLE_ENDED);
 	HAL_TIM_Base_Start_IT(&htim15);
+}
+
+void POWER_Shutdown()
+{
+	HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
+}
+
+void POWER_CheckPowerButton()
+{
+	if(PwrWasReleased)
+	{
+		if(!HAL_GPIO_ReadPin(GPIOA, PBSTAT_Pin))
+			POWER_Shutdown();
+	}
+	else
+		if(HAL_GPIO_ReadPin(GPIOA, PBSTAT_Pin))
+			PwrWasReleased = 1;
 }

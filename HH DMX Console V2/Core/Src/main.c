@@ -171,6 +171,7 @@ int main(void)
   {
     UI_ProcessQueue();
     Keypad_ProcessButtonPress();
+    POWER_CheckPowerButton();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -651,9 +652,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KEYPAD_PL_Pin MEM_CS_Pin OLED_DC_Pin OLED_RST_Pin 
-                           OLED_CS_Pin */
+                           OLED_CS_Pin PWRON_Pin */
   GPIO_InitStruct.Pin = KEYPAD_PL_Pin|MEM_CS_Pin|OLED_DC_Pin|OLED_RST_Pin 
-                          |OLED_CS_Pin;
+                          |OLED_CS_Pin|PWRON_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -670,13 +671,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_VCC_DETECT_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PWRON_Pin */
-  GPIO_InitStruct.Pin = PWRON_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(PWRON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA15 */
   GPIO_InitStruct.Pin = GPIO_PIN_15;

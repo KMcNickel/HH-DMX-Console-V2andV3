@@ -80,8 +80,8 @@ unsigned char initList[] =
     0x05,
     SSD1305_MEMORYMODE,
     0x00,						//Horizontal Addressing Mode
-    SSD1305_SEGREMAP | 0x01,
-    SSD1305_COMSCANDEC,
+    SSD1305_SEGREMAP,
+    SSD1305_COMSCANINC,
     SSD1305_SETCOMPINS,
     0x12,
     SSD1305_SETLUT,
@@ -107,8 +107,8 @@ unsigned char drawList[] =
 	0x00,
 	0x03,
     SSD1305_SETCOLADDR,
-	0x04,
-	0x83
+	0x00,
+	0x7F
 };
 
 void OLED_Checkerboard()
