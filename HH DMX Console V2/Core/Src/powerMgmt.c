@@ -50,7 +50,7 @@ void POWER_UpdateStatus(enum powerStates newPowerState, uint8_t newBatteryLevel)
 	if(newPowerState == POWER_STATE_USB && curPowerState != POWER_STATE_USB)
 	{
 		OLED_DrawPowerSymbolPlug(117, 0);
-		OLED_DrawScreen();
+		OLED_DrawArea(0, 117, 11);
 		curPowerState = newPowerState;
 	}
 	else
@@ -62,7 +62,7 @@ void POWER_UpdateStatus(enum powerStates newPowerState, uint8_t newBatteryLevel)
 				|| newBatteryLevel != curBatteryLevel))
 		{
 			OLED_DrawPowerSymbolBattery(newBatteryLevel, 117, 0);
-			OLED_DrawScreen();
+			OLED_DrawArea(0, 117, 11);
 			curBatteryLevel = newBatteryLevel;
 			curPowerState = newPowerState;
 		}

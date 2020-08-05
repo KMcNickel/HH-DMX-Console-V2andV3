@@ -906,7 +906,7 @@ void CLI_AddItem(uint16_t function)
         CLI_FunctionToString(function, string);
         OLED_String(string, strlen(string), 84, 3);
         OLED_String("\"", 1, 84 + (strlen(string) * 6), 3);
-        OLED_DrawScreen();
+        OLED_DrawPage(3);
     }
 
     void CLI_Timer_Callback ()

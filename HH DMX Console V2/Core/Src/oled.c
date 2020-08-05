@@ -30,12 +30,24 @@ enum OLED_DrawStates
     OLED_STATE_DrawWaiting
 };
 
+enum OLED_ScreenUpdateTypes
+{
+	OLED_UPDATE_EntireScreen,
+	OLED_UPDATE_Page,
+	OLED_UPDATE_Area
+};
+
 #define OLED_PixelCount 128*4
 unsigned char OLED_Buffer[OLED_PixelCount];
 enum OLED_States OLED_Sys_State;
 enum OLED_DrawStates OLED_Draw_State;
 bool initialized;
-unsigned char page;
+
+uint8_t startPage;
+uint8_t startCol;
+uint8_t colCount;
+enum OLED_ScreenUpdateTypes updateCommand;
+
 
 extern SPI_HandleTypeDef hspi1;
 
@@ -247,7 +259,6 @@ bool OLED_UpdateScreen()
     switch(OLED_Draw_State)
     {
         case OLED_STATE_DrawIdle:
-            page = 0;
             OLED_Draw_State = OLED_STATE_SetParams;
         case OLED_STATE_SetParams:
             UI_RequestOLEDWrite();
@@ -267,6 +278,32 @@ bool OLED_DrawScreen()
     if(OLED_Sys_State != OLED_STATE_Idle)
         return false;
     OLED_Sys_State = OLED_STATE_DrawScreen;
+    updateCommand = OLED_UPDATE_EntireScreen;
+    OLED_UpdateScreen();
+    return true;
+}
+
+bool OLED_DrawPage(uint8_t page)
+{
+    if(OLED_Sys_State != OLED_STATE_Idle || page <  0 || page > 3)
+        return false;
+    OLED_Sys_State = OLED_STATE_DrawScreen;
+    startPage = page;
+    updateCommand = OLED_UPDATE_Page;
+    OLED_UpdateScreen();
+    return true;
+}
+
+bool OLED_DrawArea(uint8_t page, uint8_t column, uint8_t count)
+{
+    if(OLED_Sys_State != OLED_STATE_Idle || page <  0 || page > 3 ||
+    		column < 0 || column > 127 || count + column > 128)
+        return false;
+    OLED_Sys_State = OLED_STATE_DrawScreen;
+    startPage = page;
+    startCol = column;
+    colCount = count;
+    updateCommand = OLED_UPDATE_Area;
     OLED_UpdateScreen();
     return true;
 }
@@ -308,11 +345,40 @@ void OLED_WriteUpdateScreen()
     {
         case OLED_STATE_SetParams:
             OLED_Draw_State = OLED_STATE_Data;
+            if(updateCommand == OLED_UPDATE_EntireScreen)
+            {
+            	drawList[1] = drawList[4] = 0;		//Start Page and Column
+            	drawList[2] = 0x03;					//End Page
+            	drawList[5] = 0x7F;					//End Column
+            }
+            else if(updateCommand == OLED_UPDATE_Page)
+            {
+            	drawList[1] = drawList[2] = startPage;					//Start and End Page
+            	drawList[4] = 0;										//Start Column
+            	drawList[5] = 0x7F;										//End Column
+            }
+            else if(updateCommand == OLED_UPDATE_Area)
+            {
+            	drawList[1] = drawList[2] = startPage;	//Start and End Page
+            	drawList[4] = startCol;					//Start Column
+				drawList[5] = startCol + colCount;		//End Column
+            }
             OLED_CommandArray_Write(drawList, sizeof(drawList));
             break;
         case OLED_STATE_Data:
             OLED_Draw_State = OLED_STATE_DrawWaiting;
-            OLED_DataArray_Write(OLED_Buffer, OLED_PixelCount);
+            if(updateCommand == OLED_UPDATE_EntireScreen)
+			{
+            	OLED_DataArray_Write(OLED_Buffer, OLED_PixelCount);
+			}
+			else if(updateCommand == OLED_UPDATE_Page)
+			{
+				OLED_DataArray_Write(OLED_Buffer + (startPage * 128), 128);
+			}
+			else if(updateCommand == OLED_UPDATE_Area)
+			{
+				OLED_DataArray_Write(OLED_Buffer + (startPage * 128) + startCol, colCount);
+			}
         default:
             break;
     }
