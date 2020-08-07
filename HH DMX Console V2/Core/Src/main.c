@@ -29,6 +29,7 @@
 #include "cli.h"
 #include "ui.h"
 #include "keypad.h"
+#include "eeprom.h"
 #include "dmx.h"
 #include "usb_iface.h"
 #include "powerMgmt.h"
@@ -64,6 +65,8 @@ TIM_HandleTypeDef htim17;
 
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
+
+bool aVar = false;
 
 /* USER CODE BEGIN PV */
 extern uint8_t __attribute__ ((aligned(32))) TXArray[513];
@@ -172,6 +175,7 @@ int main(void)
     UI_ProcessQueue();
     Keypad_ProcessButtonPress();
     POWER_CheckPowerButton();
+    if(aVar) EEPROM_ReadBlock(0, TXArray + 4, 512);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

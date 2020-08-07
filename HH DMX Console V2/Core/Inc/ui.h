@@ -15,7 +15,8 @@ enum activeDevice
 {
     UI_DEVICE_NONE,
     UI_DEVICE_KEYPAD,
-    UI_DEVICE_OLED
+    UI_DEVICE_OLED,
+	UI_DEVICE_EEPROM
 };
 enum
 {
@@ -30,6 +31,7 @@ bool UI_SetActiveDevice(enum activeDevice device);
 void UI_RequestKeypadRead();
 void UI_ProcessQueue();
 void UI_RequestOLEDWrite();
+void UI_RequestEEPROMReadWrite();
 void UI_SPI_Callback();
 void UI_TimerCallback();
 
