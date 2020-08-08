@@ -103,8 +103,8 @@ void UI_ProcessQueue()
 
 void UI_Init()
 {
-    //HAL_TIM_Base_Start_IT(&htim16);
-    //OLED_Init();
-    //Keypad_Init();
+    HAL_TIM_Base_Start_IT(&htim16);
+    OLED_Init();
+    Keypad_Init();
     EEPROM_Init();
 }

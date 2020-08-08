@@ -41,19 +41,19 @@ enum EEPROM_SPIActivity curTask;
 enum EEPROM_Status status;
 extern SPI_HandleTypeDef hspi1;
 
-void EEPROM_WriteData(uint8_t * data, uint8_t len)
+void EEPROM_WriteData(uint8_t * data, uint16_t len)
 {
 	HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit_IT(&hspi1, data, len);
 }
 
-void EEPROM_ReadWriteData(uint8_t * TXData, uint8_t * RXData, uint8_t len)
+void EEPROM_ReadWriteData(uint8_t * TXData, uint8_t * RXData, uint16_t len)
 {
 	HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_TransmitReceive_IT(&hspi1, TXData, RXData, len);
 }
 
-void EEPROM_ReadData(uint8_t * data, uint8_t len)
+void EEPROM_ReadData(uint8_t * data, uint16_t len)
 {
 	HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Receive_IT(&hspi1, data, len);

@@ -70,8 +70,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 /* USER CODE BEGIN PV */
 extern uint8_t /*__attribute__ ((aligned(32)))*/ TXArray[513];
 extern uint8_t switchToBootloader;
-
-uint8_t test[] = {0x7F, 0x55, 0x00, 0xFF};
+extern uint8_t presetData[CLI_PRESET_COUNT][512];
 
 /* USER CODE END PV */
 
@@ -161,22 +160,21 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   UI_Init();
-  //while(!OLED_IsReady())
-    //UI_ProcessQueue();
-
-  while(EEPROM_IsBusy())
-	  UI_ProcessQueue();
-
-  EEPROM_WriteBlock(0, test, 4);
-
-  while(EEPROM_IsBusy())
-	  UI_ProcessQueue();
-
-  EEPROM_ReadBlock(0, TXArray + 1, 4);
+  while(!OLED_IsReady())
+    UI_ProcessQueue();
 
   DMX_Init();
   CLI_Init(TXArray);
   POWER_Init();
+
+  for(uint8_t i = 0; i < CLI_PRESET_COUNT; i++)
+  {
+	  while(EEPROM_IsBusy())
+	  	  UI_ProcessQueue();
+
+	  EEPROM_ReadBlock(i * 512, presetData[i], 512);
+  }
+
   printf("Initialization Complete\n");
   /* USER CODE END 2 */
 
@@ -190,9 +188,9 @@ int main(void)
     EEPROM_QueryBusyFlag();
     if(!EEPROM_IsBusy())
     {
-		#ifdef DEBUG
-		asm ("BKPT 0");
-		#endif
+#ifdef DEBUG
+    	__BKPT(0);
+#endif
     }
     /* USER CODE END WHILE */
 
