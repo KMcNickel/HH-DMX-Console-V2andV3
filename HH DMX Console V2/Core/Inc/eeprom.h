@@ -18,9 +18,8 @@
 void EEPROM_Init();
 void EEPROM_WriteBlock(uint16_t addr, uint8_t * data, uint16_t length);
 void EEPROM_ReadBlock(uint16_t addr, uint8_t * data, uint16_t length);
-void EEPROM_SPICallback();
+bool EEPROM_SPICallback();
 void EEPROM_QueryBusyFlag();
-void EEPROM_SPICallback();
 void EEPROM_SendReadWriteData();
 bool EEPROM_IsBusy();
 

@@ -9,7 +9,7 @@
 #include "main.h"
 #include "stdbool.h"
 
-uint8_t __attribute__ ((aligned(32))) TXArray[513];
+uint8_t /*__attribute__ ((aligned(32)))*/ TXArray[513];
 
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim6;

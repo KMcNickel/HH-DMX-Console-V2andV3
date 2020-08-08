@@ -66,11 +66,13 @@ TIM_HandleTypeDef htim17;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 
-bool aVar = false;
 
 /* USER CODE BEGIN PV */
-extern uint8_t __attribute__ ((aligned(32))) TXArray[513];
+extern uint8_t /*__attribute__ ((aligned(32)))*/ TXArray[513];
 extern uint8_t switchToBootloader;
+
+uint8_t test[] = {0x7F, 0x55, 0x00, 0xFF};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -159,8 +161,18 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   UI_Init();
-  while(!OLED_IsReady())
-    UI_ProcessQueue();
+  //while(!OLED_IsReady())
+    //UI_ProcessQueue();
+
+  while(EEPROM_IsBusy())
+	  UI_ProcessQueue();
+
+  EEPROM_WriteBlock(0, test, 4);
+
+  while(EEPROM_IsBusy())
+	  UI_ProcessQueue();
+
+  EEPROM_ReadBlock(0, TXArray + 1, 4);
 
   DMX_Init();
   CLI_Init(TXArray);
@@ -175,7 +187,13 @@ int main(void)
     UI_ProcessQueue();
     Keypad_ProcessButtonPress();
     POWER_CheckPowerButton();
-    if(aVar) EEPROM_ReadBlock(0, TXArray + 4, 512);
+    EEPROM_QueryBusyFlag();
+    if(!EEPROM_IsBusy())
+    {
+		#ifdef DEBUG
+		asm ("BKPT 0");
+		#endif
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

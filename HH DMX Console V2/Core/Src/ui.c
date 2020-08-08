@@ -38,18 +38,19 @@ void UI_SPI_Callback()
     {
         case UI_DEVICE_KEYPAD:
             Keypad_SPICallback();
+            curActiveDevice = UI_DEVICE_NONE;
             break;
         case UI_DEVICE_OLED:
             OLED_SPICallback();
+            curActiveDevice = UI_DEVICE_NONE;
             break;
         case UI_DEVICE_EEPROM:
-            EEPROM_SPICallback();
+            if(!EEPROM_SPICallback())	//Function returns true if EEPROM is still using the SPI bus
+            	curActiveDevice = UI_DEVICE_NONE;
             break;
         default:
             break;
     }
-    curActiveDevice = UI_DEVICE_NONE;
-
 }
 
 void UI_RequestKeypadRead()
@@ -102,8 +103,8 @@ void UI_ProcessQueue()
 
 void UI_Init()
 {
-    HAL_TIM_Base_Start_IT(&htim16);
-    OLED_Init();
-    Keypad_Init();
+    //HAL_TIM_Base_Start_IT(&htim16);
+    //OLED_Init();
+    //Keypad_Init();
     EEPROM_Init();
 }
