@@ -9,6 +9,9 @@
 #include "stdbool.h"
 #include "main.h"
 #include "oled.h"
+#include "cli.h"
+#include "ui.h"
+#include "eeprom.h"
 #include "powerMgmt.h"
 #include "usb_iface.h"
 
@@ -22,6 +25,8 @@ extern OPAMP_HandleTypeDef hopamp2;
 
 uint32_t ADCValue = 0;
 bool PwrWasReleased = 0;
+
+extern uint8_t presetData[CLI_PRESET_COUNT][512];
 
 enum powerStates
 {
@@ -87,7 +92,20 @@ void POWER_Init()
 
 void POWER_Shutdown()
 {
-	HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
+	CLI_AddToCommand(BtnClear);
+	OLED_String("Goodbye", 7, 0, 1);
+	OLED_DrawPage(1);
+	for(uint8_t i = 0; i < CLI_PRESET_COUNT; i++)
+	{
+		while(EEPROM_IsBusy())
+		    UI_ProcessQueue();
+
+	    EEPROM_WriteBlock(i * 512, presetData[i], 512);
+	}
+	while(EEPROM_IsBusy())
+		  UI_ProcessQueue();
+	while(1);
+	//HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
 }
 
 void POWER_CheckPowerButton()

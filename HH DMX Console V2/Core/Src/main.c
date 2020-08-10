@@ -124,7 +124,7 @@ int _write(int file, char *ptr, int len)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	if(switchToBootloader == 0x11)
+ 	if(switchToBootloader == 0x11)
 	USB_BootloaderInit();
   /* USER CODE END 1 */
 
@@ -186,12 +186,12 @@ int main(void)
     Keypad_ProcessButtonPress();
     POWER_CheckPowerButton();
     EEPROM_QueryBusyFlag();
-    if(!EEPROM_IsBusy())
+/*    if(!EEPROM_IsBusy())
     {
 #ifdef DEBUG
     	__BKPT(0);
 #endif
-    }
+    }*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

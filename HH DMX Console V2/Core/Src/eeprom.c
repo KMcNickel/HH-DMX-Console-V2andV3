@@ -75,8 +75,13 @@ bool EEPROM_SPICallback()		//Returns true if the SPI bus is still being used
 			HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_SET);
 			return false;
 			break;
-		case EEPROM_SPI_ReadData:
 		case EEPROM_SPI_WriteEnable:
+			HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_SET);
+			curTask = EEPROM_SPI_WriteDataAddress;
+			UI_RequestEEPROMReadWrite();
+			return false;
+			break;
+		case EEPROM_SPI_ReadData:
 			curTask = EEPROM_SPI_Inactive;
 			status = EEPROM_SPI_Idle;
 			HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin, GPIO_PIN_SET);
@@ -99,7 +104,8 @@ bool EEPROM_SPICallback()		//Returns true if the SPI bus is still being used
 					dataLength -= 64;
 					curActiveData += 64;
 					curAddr += 64;
-					curTask =  EEPROM_SPI_WriteData;
+					TXByte[0] = EEPROM_WREN;
+					curTask = EEPROM_SPI_WriteEnable;
 					UI_RequestEEPROMReadWrite();
 				}
 				else status = EEPROM_SPI_Idle;
@@ -114,12 +120,12 @@ bool EEPROM_SPICallback()		//Returns true if the SPI bus is still being used
 
 void EEPROM_SendReadWriteData()
 {
-	switch(curTask)
+	switch(curTask)							//UNTESTED: switched high and low address bytes based on oscilloscope reading
 	{
 		case EEPROM_SPI_WriteDataAddress:
 			TXByte[0] = EEPROM_WRITE;
 			TXByte[1] = curAddr >> 8;
-			TXByte[2] = curAddr && 0xFF;
+			TXByte[2] = curAddr & 0xFF;
 			EEPROM_WriteData(TXByte, 3);
 			break;
 		case EEPROM_SPI_WriteData:
@@ -130,7 +136,7 @@ void EEPROM_SendReadWriteData()
 		case EEPROM_SPI_ReadDataWriteAddress:
 			TXByte[0] = EEPROM_READ;
 			TXByte[1] = curAddr >> 8;
-			TXByte[2] = curAddr && 0xFF;
+			TXByte[2] = curAddr & 0xFF;
 			EEPROM_WriteData(TXByte, 3);
 			break;
 		case EEPROM_SPI_ReadData:
@@ -149,14 +155,7 @@ void EEPROM_SendReadWriteData()
 
 void EEPROM_Init()
 {
-	status = EEPROM_SPI_InitWaiting;
-	TXByte[0] = EEPROM_WREN;
-	curActiveData = TXByte;
-	dataLength = 1;
 
-	curTask = EEPROM_SPI_WriteEnable;
-
-	UI_RequestEEPROMReadWrite();
 }
 
 void EEPROM_WriteBlock(uint16_t addr, uint8_t * data, uint16_t length)
@@ -167,7 +166,8 @@ void EEPROM_WriteBlock(uint16_t addr, uint8_t * data, uint16_t length)
 	curAddr = addr;
 
 	status = EEPROM_SPI_Busy;
-	curTask = EEPROM_SPI_WriteDataAddress;
+	TXByte[0] = EEPROM_WREN;
+	curTask = EEPROM_SPI_WriteEnable;
 
 	UI_RequestEEPROMReadWrite();
 }
