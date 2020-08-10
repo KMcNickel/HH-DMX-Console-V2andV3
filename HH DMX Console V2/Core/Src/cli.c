@@ -770,14 +770,14 @@ void CLI_AddItem(uint16_t function)
                     case CLI_ACTION_PLAY_PRESET:
                         for(j = 1; j < 513; j++)
                         {
-                            *(cliData.values + j) = presetData[presetNum][j - 1];
+                            *(cliData.values + j) = presetData[presetNum - 1][j - 1];
                         }
                         break;
                     case CLI_ACTION_RECORD_PRESET:
                         for(j = 1; j < 513; j++)
                         {
                             uint8_t val = *(cliData.values + j);
-                            presetData[presetNum][j - 1] = val;
+                            presetData[presetNum - 1][j - 1] = val;
                         }
                         break;
                     default:
@@ -806,7 +806,7 @@ void CLI_AddItem(uint16_t function)
                         {
                             fadeTracker[j - 1] = *(cliData.values + j) * CLI_TICKS_PER_SECOND;
                             fadeCoefficient[j - 1] =
-                                    presetData[presetNum][j - 1] -  *(cliData.values + j);
+                                    presetData[presetNum - 1][j - 1] -  *(cliData.values + j);
                         }
                         break;
                     default:

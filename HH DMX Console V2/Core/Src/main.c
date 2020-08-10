@@ -29,6 +29,7 @@
 #include "cli.h"
 #include "ui.h"
 #include "keypad.h"
+#include "eeprom.h"
 #include "dmx.h"
 #include "usb_iface.h"
 #include "powerMgmt.h"
@@ -66,8 +67,10 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE BEGIN PV */
-extern uint8_t __attribute__ ((aligned(32))) TXArray[513];
+extern uint8_t /*__attribute__ ((aligned(32)))*/ TXArray[513];
 extern uint8_t switchToBootloader;
+extern uint8_t presetData[CLI_PRESET_COUNT][512];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,7 +123,7 @@ int _write(int file, char *ptr, int len)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	if(switchToBootloader == 0x11)
+ 	if(switchToBootloader == 0x11)
 	USB_BootloaderInit();
   /* USER CODE END 1 */
 
@@ -162,6 +165,15 @@ int main(void)
   DMX_Init();
   CLI_Init(TXArray);
   POWER_Init();
+
+  for(uint8_t i = 0; i < CLI_PRESET_COUNT; i++)
+  {
+	  while(EEPROM_IsBusy())
+	  	  UI_ProcessQueue();
+
+	  EEPROM_ReadBlock(i * 512, presetData[i], 512);
+  }
+
   printf("Initialization Complete\n");
   /* USER CODE END 2 */
 
@@ -172,6 +184,13 @@ int main(void)
     UI_ProcessQueue();
     Keypad_ProcessButtonPress();
     POWER_CheckPowerButton();
+    EEPROM_QueryBusyFlag();
+/*    if(!EEPROM_IsBusy())
+    {
+#ifdef DEBUG
+    	__BKPT(0);
+#endif
+    }*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

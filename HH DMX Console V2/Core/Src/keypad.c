@@ -160,7 +160,7 @@ void Keypad_ProcessButtonPress()
     {
         if(buttonStates[i] == KEYPAD_BUTTON_ACTIVATED)
         {
-            CLI_AddToCommand(keypadMapping[i]);
+        	CLI_AddToCommand(keypadMapping[i]);
             buttonStates[i] = KEYPAD_BUTTON_PROCESSED;
             break;
         }
