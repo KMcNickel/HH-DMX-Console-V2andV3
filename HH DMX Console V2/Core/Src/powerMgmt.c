@@ -24,7 +24,6 @@ extern OPAMP_HandleTypeDef hopamp2;
 #define ADCBAT_MAXVOLTAGE 29	//3.00V or more = 8 bars
 
 uint32_t ADCValue = 0;
-bool PwrWasReleased = 0;
 
 extern uint8_t presetData[CLI_PRESET_COUNT][512];
 
@@ -34,6 +33,14 @@ enum powerStates
 	POWER_STATE_USB,
 	POWER_STATE_BATTERY
 } curPowerState;
+
+enum powerButtonStates
+{
+	POWER_BUTTON_PRESSED_ON,
+	POWER_BUTTON_RELEASED_ON,
+	POWER_BUTTON_PRESSED_OFF,
+} pwrButtonState;
+
 uint8_t curBatteryLevel;
 uint8_t finalBatteryLevel;
 uint8_t initCount;
@@ -43,6 +50,8 @@ void HAL_ADC_ConvCpltCallback (ADC_HandleTypeDef * hadc)
 	HAL_ADC_Stop_IT(&hadc2);
 
 	ADCValue = HAL_ADC_GetValue(&hadc2) / ADCBAT_DIVIDEND;
+
+	if(ADCValue <= 19) POWER_Shutdown();
 
 	if(finalBatteryLevel != 0) ADCValue = ((finalBatteryLevel * 2) + ADCValue) / 3;
 	finalBatteryLevel = ADCValue;
@@ -104,18 +113,21 @@ void POWER_Shutdown()
 	}
 	while(EEPROM_IsBusy())
 		  UI_ProcessQueue();
-	while(1);
-	//HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
 }
 
 void POWER_CheckPowerButton()
 {
-	if(PwrWasReleased)
+	if(!HAL_GPIO_ReadPin(GPIOA, PBSTAT_Pin))		//Button Pressed
 	{
-		if(!HAL_GPIO_ReadPin(GPIOA, PBSTAT_Pin))
+		if(pwrButtonState == POWER_BUTTON_RELEASED_ON)
+			pwrButtonState = POWER_BUTTON_PRESSED_OFF;
+	}
+	else											//Button Released
+	{
+		if(pwrButtonState == POWER_BUTTON_PRESSED_ON)
+			pwrButtonState = POWER_BUTTON_RELEASED_ON;
+		if(pwrButtonState == POWER_BUTTON_PRESSED_OFF)
 			POWER_Shutdown();
 	}
-	else
-		if(HAL_GPIO_ReadPin(GPIOA, PBSTAT_Pin))
-			PwrWasReleased = 1;
 }

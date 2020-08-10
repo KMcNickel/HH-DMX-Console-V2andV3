@@ -66,7 +66,6 @@ TIM_HandleTypeDef htim17;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 
-
 /* USER CODE BEGIN PV */
 extern uint8_t /*__attribute__ ((aligned(32)))*/ TXArray[513];
 extern uint8_t switchToBootloader;
