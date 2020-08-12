@@ -9,6 +9,7 @@
 #include "oled.h"
 #include "keypad.h"
 #include "stdbool.h"
+#include "eeprom.h"
 #include "main.h"
 
 enum activeDevice curActiveDevice;

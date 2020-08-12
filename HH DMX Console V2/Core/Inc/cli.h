@@ -33,6 +33,7 @@
 #define BtnPreset 612
 #define BtnOffset 613
 #define BtnTime 614
+#define FuncDblAt 701
 
 void CLI_Init(uint8_t* dmxBuf);
 void CLI_AddToCommand(uint16_t function);

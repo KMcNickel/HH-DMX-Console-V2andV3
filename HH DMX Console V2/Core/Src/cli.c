@@ -149,6 +149,7 @@ void CLI_AddItem(uint16_t function)
         uint16_t offset = 1;
         uint8_t time = 0;
         uint8_t presetNum = 0;
+        bool DblAtMode;
         enum commandActionType cmdAction = CLI_ACTION_SET_CHANNEL_VALUES;
         enum CommandSectionCompleteStatus cmdStatus = CLI_COMMAND_SECTION_NEW;
 
@@ -398,10 +399,23 @@ void CLI_AddItem(uint16_t function)
                 case CLI_COMMAND_SECTION_VALUE:
                     switch(cliData.command[i])
                     {
-                        case SWITCH_VALID_PERCENT_VALUES:
-                            lowVal = highVal = cliData.command[i] * 2.55;
-                            cmdStatus = CLI_COMMAND_SECTION_VALUE_ENTERED;
-                            break;
+                    	case BtnAt:
+                    		DblAtMode = !DblAtMode;
+                    		break;
+                        case SWITCH_VALID_RAW_VALUES:
+                        	if(!DblAtMode)
+							{
+                        		if(cliData.command[i] >= 0 && cliData.command[i] <= 100)
+                        			lowVal = highVal = cliData.command[i] * 2.55;
+								else
+								{
+									cmdStatus = CLI_COMMAND_SECTION_ERROR;
+									break;
+								}
+							}
+                        	else lowVal = highVal = cliData.command[i];
+							cmdStatus = CLI_COMMAND_SECTION_VALUE_ENTERED;
+                        	break;
                         case BtnMinus:
                             cmdStatus = CLI_COMMAND_SECTION_VALUE_DECREMENT;
                             break;
@@ -447,10 +461,20 @@ void CLI_AddItem(uint16_t function)
                     cmdStatus = CLI_COMMAND_SECTION_ERROR;
                     switch(cliData.command[i])
                     {
-                        case SWITCH_VALID_PERCENT_VALUES:
-                            valIncDec = cliData.command[i] * 2.55;
-                            cmdStatus = CLI_COMMAND_SECTION_VALUE_INCREMENT_ENTERED;
-                            break;
+                        case SWITCH_VALID_RAW_VALUES:
+							if(!DblAtMode)
+							{
+								if(cliData.command[i] >= 0 && cliData.command[i] <= 100)
+									valIncDec = cliData.command[i] * 2.55;
+								else
+								{
+									cmdStatus = CLI_COMMAND_SECTION_ERROR;
+									break;
+								}
+							}
+							else valIncDec = cliData.command[i];
+							cmdStatus = CLI_COMMAND_SECTION_VALUE_INCREMENT_ENTERED;
+							break;
                         default:
                             cmdStatus = CLI_COMMAND_SECTION_ERROR;
                             break;
@@ -475,10 +499,20 @@ void CLI_AddItem(uint16_t function)
                     cmdStatus = CLI_COMMAND_SECTION_ERROR;
                     switch(cliData.command[i])
                     {
-                        case SWITCH_VALID_PERCENT_VALUES:
-                            valIncDec = cliData.command[i] * -2.55;
-                            cmdStatus = CLI_COMMAND_SECTION_VALUE_DECREMENT_ENTERED;
-                            break;
+                        case SWITCH_VALID_RAW_VALUES:
+							if(!DblAtMode)
+							{
+								if(cliData.command[i] >= 0 && cliData.command[i] <= 100)
+									valIncDec = cliData.command[i] * -2.55;
+								else
+								{
+									cmdStatus = CLI_COMMAND_SECTION_ERROR;
+									break;
+								}
+							}
+							else valIncDec = cliData.command[i] * -1;
+							cmdStatus = CLI_COMMAND_SECTION_VALUE_DECREMENT_ENTERED;
+							break;
                         default:
                             cmdStatus = CLI_COMMAND_SECTION_ERROR;
                             break;
@@ -510,13 +544,31 @@ void CLI_AddItem(uint16_t function)
                             highVal = 255;
                             cmdStatus = CLI_COMMAND_SECTION_COMPLETE;
                             break;
-                        case SWITCH_VALID_PERCENT_VALUES:
-                            if(cliData.command[i] > lowVal)
-                                highVal = cliData.command[i] * 2.55;
-                            else
-                                lowVal = cliData.command[i] * 2.55;
-                            cmdStatus = CLI_COMMAND_SECTION_VALUE_THRU_ENTERED;
-                            break;
+                        case SWITCH_VALID_RAW_VALUES:
+							if(!DblAtMode)
+							{
+								if(cliData.command[i] >= 0 && cliData.command[i] <= 100)
+								{
+									if(cliData.command[i] > lowVal)
+										highVal = cliData.command[i] * 2.55;
+									else
+										lowVal = cliData.command[i] * 2.55;
+								}
+								else
+								{
+									cmdStatus = CLI_COMMAND_SECTION_ERROR;
+									break;
+								}
+							}
+							else
+							{
+								if(cliData.command[i] > lowVal)
+									highVal = cliData.command[i];
+								else
+									lowVal = cliData.command[i];
+							}
+							cmdStatus = CLI_COMMAND_SECTION_VALUE_THRU_ENTERED;
+							break;
                         case BtnFull:
                         case BtnEnter:
                             highVal = 255;
@@ -868,6 +920,9 @@ void CLI_AddItem(uint16_t function)
             case BtnTime:
                 strcpy(str, "Time");
                 break;
+            case FuncDblAt:
+            	strcpy(str, "AtDec");
+            	break;
             default:
                 sprintf(str, "%d", function);
                 break;
@@ -882,7 +937,12 @@ void CLI_AddItem(uint16_t function)
 
         for(i = 0; i < cliData.counter; i++)
         {
-            CLI_FunctionToString(cliData.command[i], string + strlen(string));
+            if(i < cliData.counter - 1 && cliData.command[i] == BtnAt && cliData.command[i + 1] == BtnAt)
+			{
+				CLI_FunctionToString(FuncDblAt, string + strlen(string));
+				i++;
+			}
+            else CLI_FunctionToString(cliData.command[i], string + strlen(string));
             j = strlen(string);
             string[j] = ' ';
             string[j + 1] = '\0';
