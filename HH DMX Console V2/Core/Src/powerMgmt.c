@@ -113,7 +113,8 @@ void POWER_Shutdown()
 	}
 	while(EEPROM_IsBusy())
 		  UI_ProcessQueue();
-	HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
 }
 
 void POWER_CheckPowerButton()

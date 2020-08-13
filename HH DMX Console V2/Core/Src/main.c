@@ -158,6 +158,9 @@ int main(void)
   MX_OPAMP2_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, PWRON_Pin, GPIO_PIN_RESET);
+
   UI_Init();
   while(!OLED_IsReady())
     UI_ProcessQueue();
@@ -656,10 +659,11 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin|OLED_DC_Pin|OLED_RST_Pin|OLED_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, KEYPAD_PL_Pin|OLED_DC_Pin|OLED_RST_Pin|OLED_CS_Pin 
+                          |PWRON_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, MEM_CS_Pin|PWRON_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(MEM_CS_GPIO_Port, MEM_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(DMX_DIR_GPIO_Port, DMX_DIR_Pin, GPIO_PIN_RESET);
