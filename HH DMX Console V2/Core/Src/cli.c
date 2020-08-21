@@ -37,6 +37,8 @@ enum CommandSectionCompleteStatus
     CLI_COMMAND_SECTION_RECORD_ENTERED,
     CLI_COMMAND_SECTION_PLAYBACK,
     CLI_COMMAND_SECTION_PLAYBACK_ENTERED,
+    CLI_COMMAND_SECTION_PLAYBACK_VALUE,
+    CLI_COMMAND_SECTION_PLAYBACK_VALUE_ENTERED,
 	CLI_COMMAND_SECTION_PLAYBACK_TIME,
 	CLI_COMMAND_SECTION_PLAYBACK_TIME_ENTERED,
     CLI_COMMAND_SECTION_COMPLETE,
@@ -149,7 +151,7 @@ void CLI_AddItem(uint16_t function)
         uint16_t offset = 1;
         uint8_t time = 0;
         uint8_t presetNum = 0;
-        bool DblAtMode;
+        bool DblAtMode = false;
         enum commandActionType cmdAction = CLI_ACTION_SET_CHANNEL_VALUES;
         enum CommandSectionCompleteStatus cmdStatus = CLI_COMMAND_SECTION_NEW;
 
@@ -648,6 +650,7 @@ void CLI_AddItem(uint16_t function)
                     {
                         case SWITCH_VALID_PRESETS:
                             presetNum = cliData.command[i];
+                            lowVal = 255;
                             cmdStatus = CLI_COMMAND_SECTION_PLAYBACK_ENTERED;
                             break;
                         default:
@@ -661,6 +664,9 @@ void CLI_AddItem(uint16_t function)
                         	case BtnTime:
                         		cmdStatus = CLI_COMMAND_SECTION_PLAYBACK_TIME;
                         		break;
+                        	case BtnAt:
+                        		cmdStatus = CLI_COMMAND_SECTION_PLAYBACK_VALUE;
+								break;
                             case BtnEnter:
                                 cmdAction = CLI_ACTION_PLAY_PRESET;
                                 cmdStatus = CLI_COMMAND_COMPLETE;
@@ -670,6 +676,46 @@ void CLI_AddItem(uint16_t function)
                                 break;
                         }
                         break;
+					case CLI_COMMAND_SECTION_PLAYBACK_VALUE:
+						switch(cliData.command[i])
+						{
+							case BtnAt:
+								DblAtMode = !DblAtMode;
+								break;
+							case SWITCH_VALID_RAW_VALUES:
+								if(!DblAtMode)
+								{
+									if(cliData.command[i] >= 0 && cliData.command[i] <= 100)
+										lowVal = cliData.command[i] * 2.55;
+									else
+									{
+										cmdStatus = CLI_COMMAND_SECTION_ERROR;
+										break;
+									}
+								}
+								else lowVal = cliData.command[i];
+								cmdStatus = CLI_COMMAND_SECTION_PLAYBACK_VALUE_ENTERED;
+								break;
+							default:
+								cmdStatus = CLI_COMMAND_SECTION_ERROR;
+								break;
+						}
+						break;
+					case CLI_COMMAND_SECTION_PLAYBACK_VALUE_ENTERED:
+						switch(cliData.command[i])
+						{
+							case BtnTime:
+								cmdStatus = CLI_COMMAND_SECTION_PLAYBACK_TIME;
+								break;
+							case BtnEnter:
+								cmdAction = CLI_ACTION_PLAY_PRESET;
+								cmdStatus = CLI_COMMAND_COMPLETE;
+								break;
+							default:
+								cmdStatus = CLI_COMMAND_SECTION_ERROR;
+								break;
+						}
+						break;
 					case CLI_COMMAND_SECTION_PLAYBACK_TIME:
 						switch(cliData.command[i])
 						{
@@ -822,7 +868,7 @@ void CLI_AddItem(uint16_t function)
                     case CLI_ACTION_PLAY_PRESET:
                         for(j = 1; j < 513; j++)
                         {
-                            *(cliData.values + j) = presetData[presetNum - 1][j - 1];
+                            *(cliData.values + j) = presetData[presetNum - 1][j - 1] * (lowVal / 255.0);
                         }
                         break;
                     case CLI_ACTION_RECORD_PRESET:
@@ -858,7 +904,7 @@ void CLI_AddItem(uint16_t function)
                         {
                             fadeTracker[j - 1] = *(cliData.values + j) * CLI_TICKS_PER_SECOND;
                             fadeCoefficient[j - 1] =
-                                    presetData[presetNum - 1][j - 1] -  *(cliData.values + j);
+                                    presetData[presetNum - 1][j - 1] * (lowVal / 255.0) -  *(cliData.values + j);
                         }
                         break;
                     default:
