@@ -51,7 +51,7 @@ void HAL_ADC_ConvCpltCallback (ADC_HandleTypeDef * hadc)
 
 	ADCValue = HAL_ADC_GetValue(&hadc2) / ADCBAT_DIVIDEND;
 
-	if(ADCValue <= 19) POWER_Shutdown();
+	if(ADCValue <= 20) POWER_Shutdown();
 
 	if(finalBatteryLevel != 0) ADCValue = ((finalBatteryLevel * 2) + ADCValue) / 3;
 	finalBatteryLevel = ADCValue;
