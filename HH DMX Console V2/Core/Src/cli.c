@@ -910,7 +910,7 @@ void CLI_AddItem(uint16_t function)
                     default:
                         break;
                 }
-                char secsLeft[9];
+                char secsLeft[10];
 				sprintf(secsLeft, "Fade: %-2d", fadeWaitTicks);
 				OLED_String(secsLeft, 8, 0, 0);
 				OLED_DrawScreen();

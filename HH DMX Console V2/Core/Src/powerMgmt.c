@@ -101,9 +101,18 @@ void POWER_Init()
 
 void POWER_Shutdown()
 {
-	CLI_AddToCommand(BtnClear);
-	OLED_String("Goodbye", 7, 0, 1);
-	OLED_DrawPage(1);
+	if(OLED_IsInitialized())
+	{
+		CLI_AddToCommand(BtnClear);
+		OLED_String("Goodbye", 7, 0, 1);
+		OLED_DrawPage(1);
+	}
+	else
+	{
+		while(!OLED_IsReady())
+			UI_ProcessQueue();
+	}
+
 	for(uint8_t i = 0; i < CLI_PRESET_COUNT; i++)
 	{
 		while(EEPROM_IsBusy())

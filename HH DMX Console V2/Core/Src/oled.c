@@ -423,3 +423,8 @@ bool OLED_IsReady()
 {
     return initialized & (OLED_Sys_State == OLED_STATE_Idle);
 }
+
+bool OLED_IsInitialized()
+{
+    return initialized;
+}
